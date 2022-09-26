@@ -1,5 +1,16 @@
 import { ToastContainer, toast } from "react-toastify";
 import { observable } from "./observable";
+import { fromEvent, merge } from "rxjs";
+import { sample, mapTo } from "rxjs/operators";
+
+merge(
+  fromEvent(document, "mousedown").pipe(mapTo(false)),
+  fromEvent(document, "mousemove").pipe(mapTo(true))
+)
+  .pipe(sample(fromEvent(document, "mouseup")))
+  .subscribe((isDragging) => {
+    console.log("Were you dragging?", isDragging);
+  });
 
 function logger(data: string) {
   console.log(`${Date.now()} ${data}`);
@@ -22,9 +33,10 @@ export const Observe = () => {
   }
 
   return (
-    <div className="App">
+    <div>
       <button onClick={handleClick1}>Button 1</button>
       <button onClick={handleClick2}>Button 2</button>
+      <div>Click or drag anywhere and check the console!</div>
       <ToastContainer />
     </div>
   );
